@@ -7,103 +7,133 @@ export function SettingsPanel() {
   const setColorMappingMode = useVisualizationStore((state) => state.setColorMappingMode);
   const updateConfig = useVisualizationStore((state) => state.updateConfig);
 
+  const handleColorMappingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setColorMappingMode(e.target.value as ColorMappingMode);
+  };
+
+  const handleVelocityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ showVelocity: e.target.checked });
+  };
+
+  const handleTrailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ showTrails: e.target.checked });
+  };
+
+  const handleTrailLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ trailLength: parseFloat(e.target.value) });
+  };
+
+  const handleParticleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ particleSize: parseInt(e.target.value) });
+  };
+
+  const handleConnectionDistanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ connectionDistance: parseInt(e.target.value) });
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Visualization Settings
-        </h3>
+        <label className="block text-xs font-medium text-white/50 mb-2.5">
+          Color Mapping
+        </label>
+        <select
+          value={config.colorMappingMode}
+          onChange={handleColorMappingChange}
+          className="w-full px-3.5 py-2.5 border border-white/10 rounded-lg bg-white/5 text-white text-sm focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all backdrop-blur-sm"
+        >
+          <option value="pitch">Pitch-based</option>
+          <option value="scale-degree">Scale Degree</option>
+          <option value="chord">Chord-based</option>
+          <option value="aesthetic">Aesthetic</option>
+        </select>
+      </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Color Mapping
+      <div className="flex items-center justify-between py-1">
+        <label className="text-sm text-white/80">
+          Show Velocity
+        </label>
+        <input
+          type="checkbox"
+          checked={config.showVelocity}
+          onChange={handleVelocityChange}
+          className="w-4 h-4 rounded border-white/20 bg-white/5 text-white focus:ring-2 focus:ring-white/20 focus:ring-offset-0 focus:ring-offset-transparent checked:bg-white checked:border-white"
+        />
+      </div>
+
+      <div className="flex items-center justify-between py-1">
+        <label className="text-sm text-white/80">
+          Show Trails
+        </label>
+        <input
+          type="checkbox"
+          checked={config.showTrails}
+          onChange={handleTrailsChange}
+          className="w-4 h-4 rounded border-white/20 bg-white/5 text-white focus:ring-2 focus:ring-white/20 focus:ring-offset-0 focus:ring-offset-transparent checked:bg-white checked:border-white"
+        />
+      </div>
+
+      {config.showTrails && (
+        <div>
+          <div className="flex items-center justify-between mb-2.5">
+            <label className="text-sm text-white/80">
+              Trail Length
             </label>
-            <select
-              value={config.colorMappingMode}
-              onChange={(e) => setColorMappingMode(e.target.value as ColorMappingMode)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            >
-              <option value="pitch">Pitch-based</option>
-              <option value="scale-degree">Scale Degree</option>
-              <option value="chord">Chord-based</option>
-              <option value="aesthetic">Aesthetic</option>
-            </select>
+            <span className="text-xs text-white/50 font-mono">
+              {config.trailLength.toFixed(1)}s
+            </span>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Show Velocity: {config.showVelocity ? "Yes" : "No"}
-            </label>
-            <input
-              type="checkbox"
-              checked={config.showVelocity}
-              onChange={(e) => updateConfig({ showVelocity: e.target.checked })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Show Trails: {config.showTrails ? "Yes" : "No"}
-            </label>
-            <input
-              type="checkbox"
-              checked={config.showTrails}
-              onChange={(e) => updateConfig({ showTrails: e.target.checked })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-            />
-          </div>
-
-          {config.showTrails && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Trail Length: {config.trailLength.toFixed(1)}s
-              </label>
-              <input
-                type="range"
-                min="0.5"
-                max="5"
-                step="0.1"
-                value={config.trailLength}
-                onChange={(e) => updateConfig({ trailLength: parseFloat(e.target.value) })}
-                className="w-full"
-              />
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Particle Size: {config.particleSize}
-            </label>
-            <input
-              type="range"
-              min="2"
-              max="20"
-              step="1"
-              value={config.particleSize}
-              onChange={(e) => updateConfig({ particleSize: parseInt(e.target.value) })}
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Connection Distance: {config.connectionDistance}
-            </label>
-            <input
-              type="range"
-              min="50"
-              max="300"
-              step="10"
-              value={config.connectionDistance}
-              onChange={(e) => updateConfig({ connectionDistance: parseInt(e.target.value) })}
-              className="w-full"
-            />
-          </div>
+          <input
+            type="range"
+            min="0.5"
+            max="5"
+            step="0.1"
+            value={config.trailLength}
+            onChange={handleTrailLengthChange}
+            className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+          />
         </div>
+      )}
+
+      <div>
+        <div className="flex items-center justify-between mb-2.5">
+          <label className="text-sm text-white/80">
+            Particle Size
+          </label>
+          <span className="text-xs text-white/50 font-mono">
+            {config.particleSize}
+          </span>
+        </div>
+        <input
+          type="range"
+          min="2"
+          max="20"
+          step="1"
+          value={config.particleSize}
+          onChange={handleParticleSizeChange}
+          className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2.5">
+          <label className="text-sm text-white/80">
+            Connection Distance
+          </label>
+          <span className="text-xs text-white/50 font-mono">
+            {config.connectionDistance}
+          </span>
+        </div>
+        <input
+          type="range"
+          min="50"
+          max="300"
+          step="10"
+          value={config.connectionDistance}
+          onChange={handleConnectionDistanceChange}
+          className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+        />
       </div>
     </div>
   );
 }
-

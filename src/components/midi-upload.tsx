@@ -57,20 +57,27 @@ export function MidiUpload() {
     }
   };
 
+  const getDropZoneClassName = () => {
+    const base = "border border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all duration-200 relative overflow-hidden";
+    if (isLoading) {
+      return `${base} opacity-50 cursor-not-allowed border-gray-900`;
+    }
+    if (isDragging) {
+      return `${base} border-white/30 bg-white/5`;
+    }
+    return `${base} border-gray-900 hover:border-gray-800 hover:bg-white/[0.02]`;
+  };
+
   return (
     <div className="w-full">
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-          transition-colors
-          ${isDragging ? "border-blue-500 bg-blue-50 dark:bg-blue-950" : "border-gray-300 dark:border-gray-700"}
-          ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:border-gray-400 dark:hover:border-gray-600"}
-        `}
+        className={getDropZoneClassName()}
         onClick={() => !isLoading && fileInputRef.current?.click()}
       >
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
         <input
           ref={fileInputRef}
           type="file"
@@ -78,21 +85,23 @@ export function MidiUpload() {
           onChange={handleFileInput}
           className="hidden"
         />
-        {isLoading ? (
-          <p className="text-gray-600 dark:text-gray-400">Loading MIDI file...</p>
-        ) : (
-          <>
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Drop MIDI file here or click to browse
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supports .mid and .midi files
-            </p>
-          </>
-        )}
+        <div className="relative">
+          {isLoading ? (
+            <p className="text-gray-400">Loading MIDI file...</p>
+          ) : (
+            <>
+              <p className="text-base font-medium text-white mb-2">
+                Drop MIDI file here or click to browse
+              </p>
+              <p className="text-sm text-gray-500">
+                Supports .mid and .midi files
+              </p>
+            </>
+          )}
+        </div>
       </div>
       {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p className="mt-4 text-sm text-red-400">{error}</p>
       )}
     </div>
   );

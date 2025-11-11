@@ -67,30 +67,30 @@ export function PlaybackControls() {
   };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2.5">
         <button
           onClick={isPlaying ? handlePause : handlePlay}
           disabled={clips.length === 0}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2.5 bg-white text-black hover:bg-white/90 disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed rounded-lg font-medium transition-all text-sm shadow-lg shadow-black/20"
         >
           {isPlaying ? "Pause" : "Play"}
         </button>
         <button
           onClick={handleStop}
           disabled={clips.length === 0}
-          className="px-6 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2.5 border border-white/10 text-white/80 hover:border-white/20 hover:text-white hover:bg-white/5 disabled:border-white/5 disabled:text-white/20 disabled:cursor-not-allowed rounded-lg font-medium transition-all text-sm"
         >
           Stop
         </button>
         <div className="flex-1" />
-        <span className="text-sm text-gray-600 dark:text-gray-400">
+        <span className="text-xs text-white/50 font-mono">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
       </div>
 
       {duration > 0 && (
-        <div className="space-y-2">
+        <div>
           <input
             type="range"
             min="0"
@@ -98,7 +98,10 @@ export function PlaybackControls() {
             step="0.1"
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+            style={{
+              background: `linear-gradient(to right, white 0%, white ${(currentTime / duration) * 100}%, rgba(255,255,255,0.1) ${(currentTime / duration) * 100}%, rgba(255,255,255,0.1) 100%)`
+            }}
           />
         </div>
       )}

@@ -43,29 +43,29 @@ export function LiveMidiIndicator() {
 
   if (devices.length === 0) {
     return (
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="text-sm text-white/40">
         No MIDI devices found
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-center gap-2">
         <div
-          className={`w-2 h-2 rounded-full ${
-            isConnected ? "bg-green-500" : "bg-gray-400"
+          className={`w-2 h-2 rounded-full transition-colors ${
+            isConnected ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-white/20"
           }`}
         />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Live MIDI
+        <span className="text-sm text-white/60">
+          {isConnected ? "Connected" : "Disconnected"}
         </span>
       </div>
       <select
         value={selectedDevice || ""}
         onChange={(e) => setSelectedDevice(e.target.value)}
         disabled={isConnected}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:opacity-50"
+        className="w-full px-3.5 py-2.5 border border-white/10 rounded-lg bg-white/5 text-white text-sm focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <option value="">Select MIDI device</option>
         {devices.map((device) => (
@@ -78,14 +78,14 @@ export function LiveMidiIndicator() {
         <button
           onClick={handleConnect}
           disabled={!selectedDevice}
-          className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+          className="w-full px-4 py-2.5 bg-white text-black hover:bg-white/90 disabled:bg-white/10 disabled:text-white/30 disabled:cursor-not-allowed rounded-lg font-medium transition-all text-sm shadow-lg shadow-black/20"
         >
           Connect
         </button>
       ) : (
         <button
           onClick={handleDisconnect}
-          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+          className="w-full px-4 py-2.5 border border-white/10 text-white/80 hover:border-white/20 hover:text-white hover:bg-white/5 rounded-lg font-medium transition-all text-sm"
         >
           Disconnect
         </button>
@@ -93,4 +93,3 @@ export function LiveMidiIndicator() {
     </div>
   );
 }
-

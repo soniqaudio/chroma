@@ -44,11 +44,12 @@ export class FlowingParticlesStyle {
   }
 
   updateClips(clips: MidiNoteClip[], currentTime: number): void {
-    const visibleWindow = 5;
+    const visibleWindow = 10;
+    const trailLengthSeconds = this.config.trailLength || 2;
     const visibleClips = clips.filter(
       (clip) =>
         clip.start <= currentTime + visibleWindow &&
-        clip.start + clip.duration >= currentTime - visibleWindow,
+        clip.start + clip.duration + trailLengthSeconds >= currentTime - visibleWindow,
     );
 
     const activeParticleIds = new Set(
@@ -56,10 +57,13 @@ export class FlowingParticlesStyle {
     );
 
     visibleClips.forEach((clip) => {
-      const isActive = clip.start <= currentTime && clip.start + clip.duration >= currentTime;
+      const clipStart = clip.start;
+      const clipEnd = clip.start + clip.duration;
+      const isCurrentlyPlaying = clipStart <= currentTime && clipEnd >= currentTime;
+      const isRecentlyPlayed = clipEnd >= currentTime - trailLengthSeconds && clipEnd <= currentTime;
 
-      if (isActive && !activeParticleIds.has(clip.id)) {
-        const x = clip.start * this.timeScale;
+      if ((isCurrentlyPlaying || isRecentlyPlayed) && !activeParticleIds.has(clip.id)) {
+        const x = clipStart * this.timeScale;
         const y = this.viewportHeight - (clip.noteNumber * this.pitchScale);
         const velocity = clip.velocity / 127;
 
@@ -70,8 +74,8 @@ export class FlowingParticlesStyle {
           vy: (Math.random() - 0.5) * 0.5,
           size: this.config.particleSize * (0.5 + velocity * 0.5),
           color: this.colorMapper.getColor(clip, this.config.colorMappingMode, clip.velocity),
-          age: 0,
-          maxAge: clip.duration * 60,
+          age: isCurrentlyPlaying ? 0 : Math.floor((currentTime - clipEnd) * 60),
+          maxAge: (clip.duration + trailLengthSeconds) * 60,
           clip,
         };
 
@@ -82,7 +86,8 @@ export class FlowingParticlesStyle {
 
     this.particles = this.particles.filter((p) => {
       const clipEnd = p.clip.start + p.clip.duration;
-      return clipEnd >= currentTime - 1;
+      const trailLengthSeconds = this.config.trailLength || 2;
+      return clipEnd + trailLengthSeconds >= currentTime - 0.5;
     });
   }
 
@@ -92,8 +97,18 @@ export class FlowingParticlesStyle {
       particle.y += particle.vy;
       particle.age++;
 
-      const fade = 1 - particle.age / particle.maxAge;
-      particle.color.a = fade * 0.8;
+      const clipEnd = particle.clip.start + particle.clip.duration;
+      const isPastClipEnd = currentTime > clipEnd;
+      
+      if (isPastClipEnd) {
+        const trailLengthSeconds = this.config.trailLength || 2;
+        const timePastEnd = currentTime - clipEnd;
+        const fade = Math.max(0, 1 - timePastEnd / trailLengthSeconds);
+        particle.color.a = fade * 0.9;
+      } else {
+        const fade = 1 - particle.age / particle.maxAge;
+        particle.color.a = Math.max(0.7, fade * 0.95);
+      }
 
       if (particle.y < 0 || particle.y > this.viewportHeight) {
         particle.vy *= -0.8;
@@ -122,11 +137,8 @@ export class FlowingParticlesStyle {
       );
       p5.noStroke();
 
-      if (this.config.showVelocity) {
-        p5.circle(particle.x, particle.y, particle.size);
-      } else {
-        p5.circle(particle.x, particle.y, this.config.particleSize);
-      }
+      const size = this.config.showVelocity ? particle.size : this.config.particleSize;
+      p5.circle(particle.x, particle.y, size);
 
       p5.pop();
     });
