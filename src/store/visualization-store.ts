@@ -1,6 +1,10 @@
 import { create } from "zustand";
+import { applyPreset } from "@/lib/visualization/presets";
 
 export type ColorMappingMode = "pitch" | "scale-degree" | "chord" | "aesthetic";
+export type ParticleShape = "circle" | "rectangle" | "glitch-block" | "mixed";
+export type TrailMode = "none" | "fade" | "glow";
+export type ColorMode = "rgb" | "hsl" | "hsla";
 
 export interface ColorPalette {
   colors: string[];
@@ -21,6 +25,13 @@ export interface VisualizationConfig {
   complexity: number;
   motionSpeed: number;
   blurAmount: number;
+  particleShape: ParticleShape;
+  trailMode: TrailMode;
+  trailIntensity: number;
+  colorMode: ColorMode;
+  hueVariation: number;
+  particleDrift: number;
+  particleRotation: boolean;
   layers: {
     background: boolean;
     particles: boolean;
@@ -52,6 +63,13 @@ const defaultConfig: VisualizationConfig = {
   complexity: 0.6,
   motionSpeed: 0.5,
   blurAmount: 0.25,
+  particleShape: "circle",
+  trailMode: "fade",
+  trailIntensity: 0.1,
+  colorMode: "rgb",
+  hueVariation: 0.2,
+  particleDrift: 0.3,
+  particleRotation: false,
   layers: {
     background: true,
     particles: true,
@@ -69,9 +87,10 @@ export const useVisualizationStore = create<VisualizationStore>((set) => ({
     })),
 
   setPreset: (preset) =>
-    set((state) => ({
-      config: { ...state.config, preset },
-    })),
+    set((state) => {
+      const newConfig = applyPreset(preset, state.config);
+      return { config: newConfig };
+    }),
 
   setColorMappingMode: (mode) =>
     set((state) => ({

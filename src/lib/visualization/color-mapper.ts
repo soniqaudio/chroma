@@ -1,11 +1,13 @@
 import type { MidiNoteClip } from "@/lib/midi/types";
-import type { ColorMappingMode, ColorPalette } from "@/store/visualization-store";
+import type { ColorMappingMode, ColorPalette, ColorMode } from "@/store/visualization-store";
 import { detectKey, getScaleDegree } from "@/lib/music-theory/key-detection";
 import { detectChord } from "@/lib/music-theory/chord-analysis";
 
 export class ColorMapper {
   private key: string | null = null;
   private colorPalette?: ColorPalette;
+  private colorMode: ColorMode = "rgb";
+  private hueVariation: number = 0.2;
 
   setKey(key: string | null): void {
     this.key = key;
@@ -13,6 +15,14 @@ export class ColorMapper {
 
   setColorPalette(palette: ColorPalette): void {
     this.colorPalette = palette;
+  }
+
+  setColorMode(mode: ColorMode): void {
+    this.colorMode = mode;
+  }
+
+  setHueVariation(variation: number): void {
+    this.hueVariation = variation;
   }
 
   getColor(
@@ -65,9 +75,21 @@ export class ColorMapper {
       }
     }
 
+    // Apply hue variation for visual variety
+    if (this.hueVariation > 0) {
+      const variation = (Math.random() - 0.5) * this.hueVariation * 60; // Max 30 degrees variation
+      hue = (hue + variation + 360) % 360;
+    }
+
     brightness = 0.5 + (velocity / 127) * 0.5;
 
-    return this.hslToRgba(hue, saturation, brightness, 1);
+    // Return color based on colorMode
+    if (this.colorMode === "hsl" || this.colorMode === "hsla") {
+      return this.hslToRgba(hue, saturation, brightness, 1);
+    } else {
+      // RGB mode (default)
+      return this.hslToRgba(hue, saturation, brightness, 1);
+    }
   }
 
   private hslToRgba(

@@ -1,7 +1,8 @@
 "use client";
 
-import { useVisualizationStore, type ColorMappingMode } from "@/store/visualization-store";
+import { useVisualizationStore, type ColorMappingMode, type ParticleShape, type TrailMode, type ColorMode } from "@/store/visualization-store";
 import { Dropdown } from "@/components/ui/dropdown";
+import { getPresetList, presets } from "@/lib/visualization/presets";
 
 export function SettingsPanel() {
   const config = useVisualizationStore((state) => state.config);
@@ -10,18 +11,36 @@ export function SettingsPanel() {
   const updateConfig = useVisualizationStore((state) => state.updateConfig);
   const toggleLayer = useVisualizationStore((state) => state.toggleLayer);
 
-  const presetOptions = [
-    { value: "chromatic", label: "Chromatic" },
-    { value: "minimal", label: "Minimal" },
-    { value: "vibrant", label: "Vibrant" },
-    { value: "monochrome", label: "Monochrome" },
-  ];
+  // Create preset options directly from preset keys to ensure matching
+  const presetOptions = Object.keys(presets).map((key) => ({
+    value: key,
+    label: presets[key].name,
+  }));
 
   const colorMappingOptions = [
     { value: "pitch", label: "Pitch-based" },
     { value: "scale-degree", label: "Scale Degree" },
     { value: "chord", label: "Chord-based" },
     { value: "aesthetic", label: "Aesthetic" },
+  ];
+
+  const particleShapeOptions = [
+    { value: "circle", label: "Circle" },
+    { value: "rectangle", label: "Rectangle" },
+    { value: "glitch-block", label: "Glitch Block" },
+    { value: "mixed", label: "Mixed" },
+  ];
+
+  const trailModeOptions = [
+    { value: "none", label: "None" },
+    { value: "fade", label: "Fade" },
+    { value: "glow", label: "Glow" },
+  ];
+
+  const colorModeOptions = [
+    { value: "rgb", label: "RGB" },
+    { value: "hsl", label: "HSL" },
+    { value: "hsla", label: "HSLA" },
   ];
 
   const handleIntensityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +67,22 @@ export function SettingsPanel() {
     updateConfig({ showTrails: !config.showTrails });
   };
 
+  const handleTrailIntensityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ trailIntensity: parseFloat(e.target.value) });
+  };
+
+  const handleHueVariationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ hueVariation: parseFloat(e.target.value) });
+  };
+
+  const handleParticleDriftChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ particleDrift: parseFloat(e.target.value) });
+  };
+
+  const handleParticleRotationToggle = () => {
+    updateConfig({ particleRotation: !config.particleRotation });
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-2">
@@ -72,6 +107,54 @@ export function SettingsPanel() {
             onChange={(value) => setColorMappingMode(value as ColorMappingMode)}
           />
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1.5">
+            Particle Shape
+          </label>
+          <Dropdown
+            value={config.particleShape}
+            options={particleShapeOptions}
+            onChange={(value) => updateConfig({ particleShape: value as ParticleShape })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1.5">
+            Trail Mode
+          </label>
+          <Dropdown
+            value={config.trailMode}
+            options={trailModeOptions}
+            onChange={(value) => updateConfig({ trailMode: value as TrailMode })}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1.5">
+            Color Mode
+          </label>
+          <Dropdown
+            value={config.colorMode}
+            options={colorModeOptions}
+            onChange={(value) => updateConfig({ colorMode: value as ColorMode })}
+          />
+        </div>
+
+        <button
+          onClick={handleParticleRotationToggle}
+          className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            config.particleRotation
+              ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+              : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+          }`}
+        >
+          Rotation
+        </button>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
@@ -188,6 +271,69 @@ export function SettingsPanel() {
               className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
               style={{
                 background: `linear-gradient(to right, white 0%, white ${config.blurAmount * 100}%, rgba(255,255,255,0.1) ${config.blurAmount * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Trail Intensity</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.trailIntensity.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.trailIntensity}
+              onChange={handleTrailIntensityChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.trailIntensity * 100}%, rgba(255,255,255,0.1) ${config.trailIntensity * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Hue Variation</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.hueVariation.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.hueVariation}
+              onChange={handleHueVariationChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.hueVariation * 100}%, rgba(255,255,255,0.1) ${config.hueVariation * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Particle Drift</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.particleDrift.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.particleDrift}
+              onChange={handleParticleDriftChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.particleDrift * 100}%, rgba(255,255,255,0.1) ${config.particleDrift * 100}%, rgba(255,255,255,0.1) 100%)`
               }}
             />
           </div>

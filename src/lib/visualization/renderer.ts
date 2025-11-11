@@ -18,6 +18,8 @@ export class VisualizationRenderer {
   constructor(config: VisualizationConfig) {
     this.config = config;
     this.colorMapper = new ColorMapper();
+    this.colorMapper.setColorMode(config.colorMode);
+    this.colorMapper.setHueVariation(config.hueVariation);
     this.style = new FlowingParticlesStyle(config, this.colorMapper);
   }
 
@@ -33,6 +35,8 @@ export class VisualizationRenderer {
     this.config = config;
     this.style.updateConfig(config);
     this.colorMapper.setColorPalette(config.colorPalette!);
+    this.colorMapper.setColorMode(config.colorMode);
+    this.colorMapper.setHueVariation(config.hueVariation);
   }
 
   setClips(clips: MidiNoteClip[]): void {
@@ -44,12 +48,8 @@ export class VisualizationRenderer {
   setCurrentTime(time: number): void {
     this.currentTime = time;
 
-    if (this.followPlayhead) {
-      this.cameraX = time * 100 - this.p5Instance!.width / 2;
-      this.cameraX = Math.max(0, this.cameraX);
-    }
-
-    this.style.setCameraX(this.cameraX);
+    this.cameraX = 0;
+    this.style.setCameraX(0);
   }
 
   setFollowPlayhead(follow: boolean): void {
@@ -57,8 +57,7 @@ export class VisualizationRenderer {
   }
 
   render(p5: p5): void {
-    p5.clear();
-
+    // Trail effect is handled in style.render()
     this.style.updateClips(this.clips, this.currentTime);
     this.style.update(this.currentTime);
     this.style.render(p5);
