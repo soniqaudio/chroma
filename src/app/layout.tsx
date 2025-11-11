@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Synesthesia - MIDI Visualizer",
-  description: "Transform MIDI performances into expressive visual art",
+  title: "Chroma — MIDI Visualizer",
+  description: "A clean, modern MIDI visualizer and player for piano performances.",
 };
 
 export default function RootLayout({

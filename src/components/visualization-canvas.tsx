@@ -138,13 +138,13 @@ function VisualizationCanvasInner() {
   return (
     <div
       ref={containerRef}
-      className="w-full h-full relative rounded-3xl overflow-hidden"
+      className="w-full h-full relative overflow-hidden"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
       {isDragging && (
-        <div className="absolute inset-0 z-50 bg-white/5 backdrop-blur-sm border-2 border-dashed border-white/30 rounded-3xl flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 z-50 bg-white/5 backdrop-blur-sm border-2 border-dashed border-white/30 flex items-center justify-center pointer-events-none">
           <div className="text-center">
             <p className="text-lg font-medium text-white mb-1">Drop MIDI file here</p>
             <p className="text-sm text-white/60">Supports .mid and .midi files</p>
@@ -152,7 +152,7 @@ function VisualizationCanvasInner() {
         </div>
       )}
       {isLoading && (
-        <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm rounded-3xl flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center pointer-events-none">
           <p className="text-white">Loading MIDI file...</p>
         </div>
       )}

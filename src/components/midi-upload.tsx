@@ -4,7 +4,11 @@ import { useRef, useState } from "react";
 import { parseMidiFile } from "@/lib/midi/midi-parser";
 import { useMidiStore } from "@/store/midi-store";
 
-export function MidiUpload() {
+type MidiUploadProps = {
+  variant?: "default" | "compact";
+};
+
+export function MidiUpload({ variant = "default" }: MidiUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const isLoading = useMidiStore((state) => state.isLoading);
@@ -58,7 +62,9 @@ export function MidiUpload() {
   };
 
   const getDropZoneClassName = () => {
-    const base = "border border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all duration-200 relative overflow-hidden";
+    const padding = variant === "compact" ? "p-3" : "p-16";
+    const radius = variant === "compact" ? "rounded-md" : "rounded-2xl";
+    const base = `border border-dashed ${radius} ${padding} text-center cursor-pointer transition-all duration-200 relative overflow-hidden`;
     if (isLoading) {
       return `${base} opacity-50 cursor-not-allowed border-gray-900`;
     }
@@ -77,7 +83,7 @@ export function MidiUpload() {
         className={getDropZoneClassName()}
         onClick={() => !isLoading && fileInputRef.current?.click()}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+        <div className={`absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none ${variant === "compact" ? "rounded-lg" : "rounded-2xl"}`}></div>
         <input
           ref={fileInputRef}
           type="file"
@@ -88,6 +94,16 @@ export function MidiUpload() {
         <div className="relative">
           {isLoading ? (
             <p className="text-gray-400">Loading MIDI file...</p>
+          ) : variant === "compact" ? (
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-left">
+                <p className="text-xs text-white/80">Upload MIDI</p>
+                <p className="text-[10px] text-gray-500">.mid or .midi</p>
+              </div>
+              <span className="px-2 py-1 text-xs rounded border border-white/10 text-white/80">
+                Browse
+              </span>
+            </div>
           ) : (
             <>
               <p className="text-base font-medium text-white mb-2">

@@ -1,9 +1,10 @@
 "use client";
 
-import { PlaybackControls } from "@/components/playback-controls";
 import { VisualizationCanvas } from "@/components/visualization-canvas";
 import { LiveMidiIndicator } from "@/components/live-midi-indicator";
 import { SettingsPanel } from "@/components/settings-panel";
+import { MidiUpload } from "@/components/midi-upload";
+import { Topbar } from "@/components/topbar";
 import { useMidiStore } from "@/store/midi-store";
 
 export default function Home() {
@@ -11,72 +12,58 @@ export default function Home() {
   const duration = useMidiStore((state) => state.duration);
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      <header className="border-b border-white/5 bg-black/50 backdrop-blur-xl">
-        <div className="max-w-[1920px] mx-auto px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex flex-col gap-1">
-                <div className="h-[2px] w-6 bg-white"></div>
-                <div className="h-[2px] w-6 bg-white"></div>
-                <div className="h-[2px] w-6 bg-white"></div>
-              </div>
-              <span className="text-sm font-medium tracking-tight text-white/90">SONIQAUDIO</span>
-            </div>
-            <div className="text-xs text-white/40 uppercase tracking-wider">Synesthesia</div>
-          </div>
-        </div>
-      </header>
+    <div className="h-screen bg-black text-white flex flex-col overflow-hidden">
+      <Topbar />
 
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-80 border-r border-white/5 bg-black/30 backdrop-blur-xl flex flex-col">
-          <div className="p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 flex overflow-hidden">
+        <aside className="w-[320px] border-r border-white/5 bg-black/30 backdrop-blur-xl flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <div>
-              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-4">
-                Playback
+              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-2">
+                Upload
               </h2>
-              <PlaybackControls />
+              <MidiUpload variant="compact" />
             </div>
 
-            <div className="border-t border-white/5 pt-6">
-              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-4">
-                Live MIDI
-              </h2>
-              <LiveMidiIndicator />
-            </div>
-
-            <div className="border-t border-white/5 pt-6">
-              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-4">
+            <div className="border-t border-white/5 pt-4">
+              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-2">
                 Visualization
               </h2>
               <SettingsPanel />
             </div>
 
-            {clips.length > 0 && (
-              <div className="border-t border-white/5 pt-6">
-                <div className="text-sm space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-white/50">Notes</span>
-                    <span className="text-white font-medium">{clips.length.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-white/50">Duration</span>
-                    <span className="text-white font-medium font-mono">
-                      {Math.floor(duration / 60)}:{(Math.floor(duration % 60)).toString().padStart(2, "0")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="border-t border-white/5 pt-4">
+              <h2 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em] mb-2">
+                Live MIDI
+              </h2>
+              <LiveMidiIndicator />
+            </div>
           </div>
         </aside>
 
-        <main className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-black via-black to-gray-950">
-          <div className="w-full h-full max-w-[1400px] max-h-[900px] relative">
-            <div className="absolute inset-0 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent shadow-2xl shadow-black/50">
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
-              <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/5"></div>
+        <main className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+          <div className="w-full h-full relative">
+            <div className="absolute inset-0 border border-white/10 bg-gradient-to-br from-blue-950/20 via-black to-blue-950/30 shadow-2xl shadow-black/50">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+              <div className="absolute inset-0 ring-1 ring-inset ring-white/5"></div>
+              
+              {/* Gradient Orb */}
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none opacity-50"
+                style={{
+                  background: 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 30%, transparent 70%)'
+                }}
+              ></div>
+              
               <VisualizationCanvas />
+              {clips.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="border border-white/10 bg-black/30 backdrop-blur-md p-6 text-center">
+                    <p className="text-white/90 font-medium mb-1">No MIDI loaded</p>
+                    <p className="text-white/60 text-sm">Drop a .mid file anywhere to begin</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </main>

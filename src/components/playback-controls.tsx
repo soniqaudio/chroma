@@ -84,7 +84,7 @@ export function PlaybackControls() {
           Stop
         </button>
         <div className="flex-1" />
-        <span className="text-xs text-white/50 font-mono">
+        <span className="text-xs text-white/60 font-mono tabular-nums">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
       </div>

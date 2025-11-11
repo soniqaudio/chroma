@@ -1,138 +1,257 @@
 "use client";
 
 import { useVisualizationStore, type ColorMappingMode } from "@/store/visualization-store";
+import { Dropdown } from "@/components/ui/dropdown";
 
 export function SettingsPanel() {
   const config = useVisualizationStore((state) => state.config);
+  const setPreset = useVisualizationStore((state) => state.setPreset);
   const setColorMappingMode = useVisualizationStore((state) => state.setColorMappingMode);
   const updateConfig = useVisualizationStore((state) => state.updateConfig);
+  const toggleLayer = useVisualizationStore((state) => state.toggleLayer);
 
-  const handleColorMappingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setColorMappingMode(e.target.value as ColorMappingMode);
+  const presetOptions = [
+    { value: "chromatic", label: "Chromatic" },
+    { value: "minimal", label: "Minimal" },
+    { value: "vibrant", label: "Vibrant" },
+    { value: "monochrome", label: "Monochrome" },
+  ];
+
+  const colorMappingOptions = [
+    { value: "pitch", label: "Pitch-based" },
+    { value: "scale-degree", label: "Scale Degree" },
+    { value: "chord", label: "Chord-based" },
+    { value: "aesthetic", label: "Aesthetic" },
+  ];
+
+  const handleIntensityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ intensity: parseFloat(e.target.value) });
   };
 
-  const handleVelocityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateConfig({ showVelocity: e.target.checked });
+  const handleComplexityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ complexity: parseFloat(e.target.value) });
   };
 
-  const handleTrailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateConfig({ showTrails: e.target.checked });
+  const handleMotionSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ motionSpeed: parseFloat(e.target.value) });
   };
 
-  const handleTrailLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateConfig({ trailLength: parseFloat(e.target.value) });
+  const handleBlurAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateConfig({ blurAmount: parseFloat(e.target.value) });
   };
 
-  const handleParticleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateConfig({ particleSize: parseInt(e.target.value) });
+  const handleVelocityToggle = () => {
+    updateConfig({ showVelocity: !config.showVelocity });
   };
 
-  const handleConnectionDistanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateConfig({ connectionDistance: parseInt(e.target.value) });
+  const handleTrailsToggle = () => {
+    updateConfig({ showTrails: !config.showTrails });
   };
 
   return (
-    <div className="space-y-5">
-      <div>
-        <label className="block text-xs font-medium text-white/50 mb-2.5">
-          Color Mapping
-        </label>
-        <select
-          value={config.colorMappingMode}
-          onChange={handleColorMappingChange}
-          className="w-full px-3.5 py-2.5 border border-white/10 rounded-lg bg-white/5 text-white text-sm focus:outline-none focus:border-white/20 focus:bg-white/10 transition-all backdrop-blur-sm"
-        >
-          <option value="pitch">Pitch-based</option>
-          <option value="scale-degree">Scale Degree</option>
-          <option value="chord">Chord-based</option>
-          <option value="aesthetic">Aesthetic</option>
-        </select>
-      </div>
-
-      <div className="flex items-center justify-between py-1">
-        <label className="text-sm text-white/80">
-          Show Velocity
-        </label>
-        <input
-          type="checkbox"
-          checked={config.showVelocity}
-          onChange={handleVelocityChange}
-          className="w-4 h-4 rounded border-white/20 bg-white/5 text-white focus:ring-2 focus:ring-white/20 focus:ring-offset-0 focus:ring-offset-transparent checked:bg-white checked:border-white"
-        />
-      </div>
-
-      <div className="flex items-center justify-between py-1">
-        <label className="text-sm text-white/80">
-          Show Trails
-        </label>
-        <input
-          type="checkbox"
-          checked={config.showTrails}
-          onChange={handleTrailsChange}
-          className="w-4 h-4 rounded border-white/20 bg-white/5 text-white focus:ring-2 focus:ring-white/20 focus:ring-offset-0 focus:ring-offset-transparent checked:bg-white checked:border-white"
-        />
-      </div>
-
-      {config.showTrails && (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-2">
         <div>
-          <div className="flex items-center justify-between mb-2.5">
-            <label className="text-sm text-white/80">
-              Trail Length
-            </label>
-            <span className="text-xs text-white/50 font-mono">
-              {config.trailLength.toFixed(1)}s
-            </span>
-          </div>
-          <input
-            type="range"
-            min="0.5"
-            max="5"
-            step="0.1"
-            value={config.trailLength}
-            onChange={handleTrailLengthChange}
-            className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+          <label className="block text-xs font-medium text-white/60 mb-1.5">
+            Preset
+          </label>
+          <Dropdown
+            value={config.preset}
+            options={presetOptions}
+            onChange={setPreset}
           />
         </div>
-      )}
 
-      <div>
-        <div className="flex items-center justify-between mb-2.5">
-          <label className="text-sm text-white/80">
-            Particle Size
+        <div>
+          <label className="block text-xs font-medium text-white/60 mb-1.5">
+            Color Mapping
           </label>
-          <span className="text-xs text-white/50 font-mono">
-            {config.particleSize}
-          </span>
+          <Dropdown
+            value={config.colorMappingMode}
+            options={colorMappingOptions}
+            onChange={(value) => setColorMappingMode(value as ColorMappingMode)}
+          />
         </div>
-        <input
-          type="range"
-          min="2"
-          max="20"
-          step="1"
-          value={config.particleSize}
-          onChange={handleParticleSizeChange}
-          className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
-        />
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-2.5">
-          <label className="text-sm text-white/80">
-            Connection Distance
-          </label>
-          <span className="text-xs text-white/50 font-mono">
-            {config.connectionDistance}
-          </span>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          onClick={handleVelocityToggle}
+          className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            config.showVelocity
+              ? "bg-blue-600 text-white border border-blue-500"
+              : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+          }`}
+        >
+          Velocity
+        </button>
+        <button
+          onClick={handleTrailsToggle}
+          className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            config.showTrails
+              ? "bg-blue-600 text-white border border-blue-500"
+              : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+          }`}
+        >
+          Trails
+        </button>
+      </div>
+
+      <div className="border-t border-white/5 pt-4">
+        <div className="flex items-center gap-1.5 mb-3">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="text-white/50">
+            <path d="M7 1L9 4.5L13 5.5L10.5 8.5L11 12.5L7 10.5L3 12.5L3.5 8.5L1 5.5L5 4.5L7 1Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em]">
+            Parameters
+          </h3>
         </div>
-        <input
-          type="range"
-          min="50"
-          max="300"
-          step="10"
-          value={config.connectionDistance}
-          onChange={handleConnectionDistanceChange}
-          className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
-        />
+
+        <div className="space-y-2.5">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Intensity</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.intensity.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.intensity}
+              onChange={handleIntensityChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.intensity * 100}%, rgba(255,255,255,0.1) ${config.intensity * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Complexity</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.complexity.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.complexity}
+              onChange={handleComplexityChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.complexity * 100}%, rgba(255,255,255,0.1) ${config.complexity * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Motion Speed</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.motionSpeed.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.motionSpeed}
+              onChange={handleMotionSpeedChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.motionSpeed * 100}%, rgba(255,255,255,0.1) ${config.motionSpeed * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-white/80">Blur Amount</label>
+              <span className="text-xs text-white/50 font-mono">
+                {config.blurAmount.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={config.blurAmount}
+              onChange={handleBlurAmountChange}
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+              style={{
+                background: `linear-gradient(to right, white 0%, white ${config.blurAmount * 100}%, rgba(255,255,255,0.1) ${config.blurAmount * 100}%, rgba(255,255,255,0.1) 100%)`
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-white/5 pt-4">
+        <div className="flex items-center gap-1.5 mb-3">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="text-white/50">
+            <rect x="2" y="2" width="10" height="10" stroke="currentColor" strokeWidth="1.2" fill="none" />
+            <rect x="4" y="4" width="6" height="6" stroke="currentColor" strokeWidth="1.2" fill="none" />
+            <rect x="6" y="6" width="2" height="2" stroke="currentColor" strokeWidth="1.2" fill="none" />
+          </svg>
+          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-[0.15em]">
+            Layers
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => toggleLayer("background")}
+            className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              config.layers.background
+                ? "bg-blue-600 text-white border border-blue-500"
+                : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+            }`}
+          >
+            <div className={`w-2 h-2 rounded-full border ${config.layers.background ? "bg-white border-white" : "border-white/30"}`} />
+            Background
+          </button>
+          <button
+            onClick={() => toggleLayer("particles")}
+            className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              config.layers.particles
+                ? "bg-blue-600 text-white border border-blue-500"
+                : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+            }`}
+          >
+            <div className={`w-2 h-2 rounded-full border ${config.layers.particles ? "bg-white border-white" : "border-white/30"}`} />
+            Particles
+          </button>
+          <button
+            onClick={() => toggleLayer("harmonics")}
+            className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              config.layers.harmonics
+                ? "bg-blue-600 text-white border border-blue-500"
+                : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+            }`}
+          >
+            <div className={`w-2 h-2 rounded-full border ${config.layers.harmonics ? "bg-white border-white" : "border-white/30"}`} />
+            Harmonics
+          </button>
+          <button
+            onClick={() => toggleLayer("melody")}
+            className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
+              config.layers.melody
+                ? "bg-blue-600 text-white border border-blue-500"
+                : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+            }`}
+          >
+            <div className={`w-2 h-2 rounded-full border ${config.layers.melody ? "bg-white border-white" : "border-white/30"}`} />
+            Melody
+          </button>
+        </div>
       </div>
     </div>
   );
