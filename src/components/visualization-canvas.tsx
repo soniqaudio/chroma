@@ -90,8 +90,9 @@ function VisualizationCanvasInner() {
         p.setup = () => {
           const width = containerRef.current?.clientWidth || 800;
           const height = containerRef.current?.clientHeight || 600;
-          p.createCanvas(width, height);
-
+          const canvas = p.createCanvas(width, height);
+          canvas.style('display', 'block');
+          
           const renderer = new VisualizationRenderer(configRef.current);
           renderer.initialize(p);
           renderer.setClips(clips);

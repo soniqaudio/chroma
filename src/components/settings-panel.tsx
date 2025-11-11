@@ -79,7 +79,7 @@ export function SettingsPanel() {
           onClick={handleVelocityToggle}
           className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
             config.showVelocity
-              ? "bg-blue-600 text-white border border-blue-500"
+              ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
               : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
           }`}
         >
@@ -89,7 +89,7 @@ export function SettingsPanel() {
           onClick={handleTrailsToggle}
           className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
             config.showTrails
-              ? "bg-blue-600 text-white border border-blue-500"
+              ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
               : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
           }`}
         >
@@ -211,7 +211,7 @@ export function SettingsPanel() {
             onClick={() => toggleLayer("background")}
             className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
               config.layers.background
-                ? "bg-blue-600 text-white border border-blue-500"
+                ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
                 : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
             }`}
           >
@@ -222,7 +222,7 @@ export function SettingsPanel() {
             onClick={() => toggleLayer("particles")}
             className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
               config.layers.particles
-                ? "bg-blue-600 text-white border border-blue-500"
+                ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
                 : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
             }`}
           >
@@ -233,7 +233,7 @@ export function SettingsPanel() {
             onClick={() => toggleLayer("harmonics")}
             className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
               config.layers.harmonics
-                ? "bg-blue-600 text-white border border-blue-500"
+                ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
                 : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
             }`}
           >
@@ -244,7 +244,7 @@ export function SettingsPanel() {
             onClick={() => toggleLayer("melody")}
             className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
               config.layers.melody
-                ? "bg-blue-600 text-white border border-blue-500"
+                ? "bg-blue-500/15 text-blue-200 border border-blue-400/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
                 : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/[0.07] hover:text-white/80"
             }`}
           >

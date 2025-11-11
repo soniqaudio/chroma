@@ -57,7 +57,7 @@ export class VisualizationRenderer {
   }
 
   render(p5: p5): void {
-    p5.background(10, 10, 15);
+    p5.clear();
 
     this.style.updateClips(this.clips, this.currentTime);
     this.style.update(this.currentTime);

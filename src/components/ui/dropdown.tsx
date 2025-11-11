@@ -64,8 +64,8 @@ export function Dropdown({ value, options, onChange, placeholder, className = ""
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-20 w-full mt-1 bg-black border border-white/10 rounded-md shadow-xl overflow-hidden">
+          <div className="fixed inset-0 z-[100]" onClick={() => setIsOpen(false)} />
+          <div className="absolute z-[101] w-full mt-1 bg-black/80 backdrop-blur-md border border-white/10 rounded-md shadow-2xl shadow-black/60 overflow-hidden">
             {options.map((option) => (
               <button
                 key={option.value}
@@ -76,7 +76,7 @@ export function Dropdown({ value, options, onChange, placeholder, className = ""
                 }}
                 className={`w-full px-2.5 py-1.5 text-left text-xs transition-colors ${
                   option.value === value
-                    ? "bg-blue-600 text-white"
+                    ? "bg-blue-500/20 text-white"
                     : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
               >
