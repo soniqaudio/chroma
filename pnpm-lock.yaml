@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@tonejs/midi':
+        specifier: ^2.0.28
+        version: 2.0.28
       midi-parser-js:
         specifier: ^4.0.4
         version: 4.0.4
@@ -509,6 +512,9 @@ packages:
   '@tonaljs/voicing@5.1.2':
     resolution: {integrity: sha512-Zk/8yPV+POxXq7bk9DermlTF86AmVxzN1ZNzK+hNtHF29Zah+w0xz+rEzKhQtU4q9vuqB4iGQO0q76VcbIDMew==}
 
+  '@tonejs/midi@2.0.28':
+    resolution: {integrity: sha512-RII6YpInPsOZ5t3Si/20QKpNqB1lZ2OCFJSOzJxz38YdY/3zqDr3uaml4JuCWkdixuPqP1/TBnXzhQ39csyoVg==}
+
   '@types/node@20.19.24':
     resolution: {integrity: sha512-FE5u0ezmi6y9OZEzlJfg37mqqf6ZDSF2V/NLjUyGrR9uTZ7Sb9F7bLNZ03S4XVUNRWGA7Ck4c1kK+YnuWjl+DA==}
 
@@ -531,6 +537,9 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  array-flatten@3.0.0:
+    resolution: {integrity: sha512-zPMVc3ZYlGLNk4mpK1NzP2wg0ml9t7fUgDsayR5Y5rSzxQilzR9FGu/EH2jQOcKSAeAfWeylyW8juy3OkWRvNA==}
 
   automation-events@7.1.13:
     resolution: {integrity: sha512-1Hay5TQPzxsskSqPTH3YXyzE9Iirz82zZDse2vr3+kOR7Sc7om17qIEPsESchlNX0EgKxANwR40i2g/O3GM1Tw==}
@@ -668,6 +677,9 @@ packages:
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
+  midi-file@1.2.4:
+    resolution: {integrity: sha512-B5SnBC6i2bwJIXTY9MElIydJwAmnKx+r5eJ1jknTLetzLflEl0GWveuBB6ACrQpecSRkOB6fhTx1PwXk2BVxnA==}
 
   midi-parser-js@4.0.4:
     resolution: {integrity: sha512-yCCUNemjDET40SPslUbAyi7lClSS+ttcBAWNY337kJouRFsEtIql38Fp4p5xfODkltFvuqHJL9JytnZIrzpJbw==}
@@ -1235,6 +1247,11 @@ snapshots:
       '@tonaljs/voice-leading': 5.1.2
       '@tonaljs/voicing-dictionary': 5.1.2
 
+  '@tonejs/midi@2.0.28':
+    dependencies:
+      array-flatten: 3.0.0
+      midi-file: 1.2.4
+
   '@types/node@20.19.24':
     dependencies:
       undici-types: 6.21.0
@@ -1254,6 +1271,8 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  array-flatten@3.0.0: {}
 
   automation-events@7.1.13:
     dependencies:
@@ -1359,6 +1378,8 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  midi-file@1.2.4: {}
 
   midi-parser-js@4.0.4: {}
 
