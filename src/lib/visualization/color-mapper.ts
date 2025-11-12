@@ -6,6 +6,7 @@ import { detectChord } from "@/lib/music-theory/chord-analysis";
 export class ColorMapper {
   private key: string | null = null;
   private colorPalette?: ColorPalette;
+  private colorGradient: string[] = [];
   private colorMode: ColorMode = "rgb";
   private hueVariation: number = 0.2;
 
@@ -25,6 +26,10 @@ export class ColorMapper {
     this.hueVariation = variation;
   }
 
+  setColorGradient(gradient: string[]): void {
+    this.colorGradient = gradient;
+  }
+
   getColor(
     clip: MidiNoteClip,
     mode: ColorMappingMode,
@@ -33,6 +38,32 @@ export class ColorMapper {
     let hue = 0;
     let saturation = 0.7;
     let brightness = 0.8;
+
+    // Use gradient colors if available
+    if (this.colorGradient.length >= 2) {
+      const normalizedPitch = clip.noteNumber / 127;
+      const colorIndex = normalizedPitch * (this.colorGradient.length - 1);
+      const lowerIndex = Math.floor(colorIndex);
+      const upperIndex = Math.min(Math.ceil(colorIndex), this.colorGradient.length - 1);
+      const t = colorIndex - lowerIndex;
+      
+      const lowerColor = this.hexToRgba(this.colorGradient[lowerIndex], 1);
+      const upperColor = this.hexToRgba(this.colorGradient[upperIndex], 1);
+      
+      // Interpolate between colors
+      const r = Math.round(lowerColor.r + (upperColor.r - lowerColor.r) * t);
+      const g = Math.round(lowerColor.g + (upperColor.g - lowerColor.g) * t);
+      const b = Math.round(lowerColor.b + (upperColor.b - lowerColor.b) * t);
+      
+      // Apply velocity to brightness
+      const brightness = 0.5 + (velocity / 127) * 0.5;
+      return {
+        r: Math.round(r * brightness),
+        g: Math.round(g * brightness),
+        b: Math.round(b * brightness),
+        a: 1,
+      };
+    }
 
     switch (mode) {
       case "pitch": {

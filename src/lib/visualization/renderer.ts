@@ -2,12 +2,17 @@ import type p5 from "p5";
 import type { MidiNoteClip } from "@/lib/midi/types";
 import type { VisualizationConfig } from "@/store/visualization-store";
 import { FlowingParticlesStyle } from "./styles/flowing-particles";
+import { GlitchParticlesStyle } from "./styles/glitch-particles";
+import { CrystalParticlesStyle } from "./styles/crystal-particles";
+import { FluidParticlesStyle } from "./styles/fluid-particles";
 import { ColorMapper } from "./color-mapper";
 import { detectKey } from "@/lib/music-theory/key-detection";
+import { TIME_SCALE } from "./constants";
+import type { IVisualizationStyle } from "./styles/base-style";
 
 export class VisualizationRenderer {
   private p5Instance: p5 | null = null;
-  private style: FlowingParticlesStyle;
+  private style: IVisualizationStyle;
   private colorMapper: ColorMapper;
   private config: VisualizationConfig;
   private clips: MidiNoteClip[] = [];
@@ -20,7 +25,23 @@ export class VisualizationRenderer {
     this.colorMapper = new ColorMapper();
     this.colorMapper.setColorMode(config.colorMode);
     this.colorMapper.setHueVariation(config.hueVariation);
-    this.style = new FlowingParticlesStyle(config, this.colorMapper);
+    this.colorMapper.setColorGradient(config.colorGradient);
+    this.style = this.createStyle(config);
+  }
+
+  private createStyle(config: VisualizationConfig): IVisualizationStyle {
+    const preset = config.preset || "chromatic";
+    
+    switch (preset) {
+      case "glitch":
+        return new GlitchParticlesStyle(config, this.colorMapper);
+      case "crystal":
+        return new CrystalParticlesStyle(config, this.colorMapper);
+      case "fluid":
+        return new FluidParticlesStyle(config, this.colorMapper);
+      default:
+        return new FlowingParticlesStyle(config, this.colorMapper);
+    }
   }
 
   initialize(p5: p5): void {
@@ -32,9 +53,22 @@ export class VisualizationRenderer {
   }
 
   updateConfig(config: VisualizationConfig): void {
+    const oldPreset = this.config.preset;
+    const newPreset = config.preset;
+    
+    // If preset changed, create new style instance
+    if (oldPreset !== newPreset) {
+      this.style.clear();
+      this.style = this.createStyle(config);
+      if (this.p5Instance) {
+        this.style.setViewport(this.p5Instance.width, this.p5Instance.height);
+      }
+    }
+    
     this.config = config;
     this.style.updateConfig(config);
     this.colorMapper.setColorPalette(config.colorPalette!);
+    this.colorMapper.setColorGradient(config.colorGradient);
     this.colorMapper.setColorMode(config.colorMode);
     this.colorMapper.setHueVariation(config.hueVariation);
   }
@@ -47,7 +81,7 @@ export class VisualizationRenderer {
 
   setCurrentTime(time: number): void {
     this.currentTime = time;
-
+    // Camera scrolling will be implemented later - for now particles are centered
     this.cameraX = 0;
     this.style.setCameraX(0);
   }

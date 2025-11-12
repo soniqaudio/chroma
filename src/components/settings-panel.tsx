@@ -3,6 +3,7 @@
 import { useVisualizationStore, type ColorMappingMode, type ParticleShape, type TrailMode, type ColorMode } from "@/store/visualization-store";
 import { Dropdown } from "@/components/ui/dropdown";
 import { getPresetList, presets } from "@/lib/visualization/presets";
+import { ColorGradientPicker } from "@/components/color-gradient-picker";
 
 export function SettingsPanel() {
   const config = useVisualizationStore((state) => state.config);
@@ -107,6 +108,10 @@ export function SettingsPanel() {
             onChange={(value) => setColorMappingMode(value as ColorMappingMode)}
           />
         </div>
+      </div>
+
+      <div>
+        <ColorGradientPicker />
       </div>
 
       <div className="grid grid-cols-2 gap-2">

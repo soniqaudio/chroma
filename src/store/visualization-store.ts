@@ -16,6 +16,7 @@ export interface VisualizationConfig {
   preset: string;
   colorMappingMode: ColorMappingMode;
   colorPalette?: ColorPalette;
+  colorGradient: string[]; // Array of 2-3 hex colors for gradient
   showVelocity: boolean;
   showTrails: boolean;
   trailLength: number;
@@ -46,6 +47,7 @@ interface VisualizationStore {
   setPreset: (preset: string) => void;
   setColorMappingMode: (mode: ColorMappingMode) => void;
   setColorPalette: (palette: ColorPalette) => void;
+  setColorGradient: (gradient: string[]) => void;
   updateConfig: (updates: Partial<VisualizationConfig>) => void;
   toggleLayer: (layer: keyof VisualizationConfig["layers"]) => void;
 }
@@ -54,6 +56,7 @@ const defaultConfig: VisualizationConfig = {
   style: "flowing-particles",
   preset: "chromatic",
   colorMappingMode: "pitch",
+  colorGradient: ["#3b82f6", "#8b5cf6", "#ec4899"], // Blue -> Purple -> Pink gradient
   showVelocity: true,
   showTrails: true,
   trailLength: 2,
@@ -100,6 +103,11 @@ export const useVisualizationStore = create<VisualizationStore>((set) => ({
   setColorPalette: (palette) =>
     set((state) => ({
       config: { ...state.config, colorPalette: palette },
+    })),
+
+  setColorGradient: (gradient) =>
+    set((state) => ({
+      config: { ...state.config, colorGradient: gradient },
     })),
 
   updateConfig: (updates) =>

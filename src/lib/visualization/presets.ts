@@ -9,10 +9,8 @@ export interface PresetDefinition {
 export const presets: Record<string, PresetDefinition> = {
   chromatic: {
     name: "Chromatic",
-    description: "Classic chromatic color mapping",
+    description: "Classic flowing particles",
     config: {
-      colorMappingMode: "pitch",
-      colorMode: "rgb",
       particleShape: "circle",
       trailMode: "fade",
       trailIntensity: 0.1,
@@ -21,107 +19,59 @@ export const presets: Record<string, PresetDefinition> = {
       intensity: 0.75,
       complexity: 0.6,
       motionSpeed: 0.5,
-      hueVariation: 0.2,
-    },
-  },
-  minimal: {
-    name: "Minimal",
-    description: "Clean and minimal aesthetic",
-    config: {
-      colorMappingMode: "pitch",
-      colorMode: "rgb",
-      particleShape: "circle",
-      trailMode: "none",
-      trailIntensity: 0.05,
-      particleDrift: 0.05, // Very low drift
-      particleRotation: false,
-      intensity: 0.3, // Low intensity
-      complexity: 0.2, // Low complexity
-      motionSpeed: 0.3,
-      hueVariation: 0.05, // Minimal variation
       showTrails: false,
-      particleSize: 3, // Smaller particles
+      particleSize: 4,
       showVelocity: false,
     },
   },
-  vibrant: {
-    name: "Vibrant",
-    description: "High saturation and energy",
+  glitch: {
+    name: "Glitch",
+    description: "Digital corruption and scanline effects",
     config: {
-      colorMappingMode: "pitch",
-      colorMode: "hsl",
-      particleShape: "mixed", // Mixed shapes
-      trailMode: "glow",
-      trailIntensity: 0.25,
-      particleDrift: 0.7, // High drift
-      particleRotation: true, // Rotation enabled
-      intensity: 1.0, // Maximum intensity
-      complexity: 0.95, // High complexity
-      motionSpeed: 0.9, // Fast motion
-      hueVariation: 0.6, // High hue variation
-      showTrails: true,
-      particleSize: 7, // Larger particles
-      showVelocity: true,
-    },
-  },
-  monochrome: {
-    name: "Monochrome",
-    description: "Single color aesthetic",
-    config: {
-      colorMappingMode: "aesthetic",
-      colorMode: "rgb",
-      particleShape: "rectangle", // Rectangles
+      particleShape: "glitch-block",
       trailMode: "fade",
-      trailIntensity: 0.12,
-      particleDrift: 0.15, // Low drift
+      trailIntensity: 0.15,
+      particleDrift: 0.2,
       particleRotation: false,
-      intensity: 0.5,
-      complexity: 0.3,
-      motionSpeed: 0.4,
-      hueVariation: 0, // No hue variation
-      showTrails: true,
-      particleSize: 5,
+      intensity: 0.9,
+      complexity: 0.7,
+      motionSpeed: 0.6,
+      showTrails: false,
+      particleSize: 8,
       showVelocity: false,
     },
   },
-  orbital: {
-    name: "Orbital",
-    description: "Radial motion inspired by orbital particles",
+  crystal: {
+    name: "Crystal",
+    description: "Rotating crystal polygons with trails",
     config: {
-      colorMappingMode: "pitch",
-      colorMode: "hsl",
-      particleShape: "circle",
-      trailMode: "glow",
-      trailIntensity: 0.3, // Higher for visible trails
-      particleDrift: 1.0, // Maximum drift for orbital feel
-      particleRotation: false,
-      intensity: 1.0,
-      complexity: 0.9,
-      motionSpeed: 0.8,
-      hueVariation: 0.7, // Very high hue variation for color wheel effect
+      particleShape: "circle", // Will be overridden to crystal polygons
+      trailMode: "fade",
+      trailIntensity: 0.2,
+      particleDrift: 0.05, // Very minimal drift for cleaner look
+      particleRotation: true,
+      intensity: 0.95, // Higher intensity for more visibility
+      complexity: 0.9, // Higher complexity = more crystals spawn
+      motionSpeed: 0.3, // Slower for more visible rotation
       showTrails: true,
-      particleSize: 6, // Larger particles
-      showVelocity: true,
+      particleSize: 8, // Larger base size
+      showVelocity: false,
     },
   },
   fluid: {
     name: "Fluid",
-    description: "Smooth, flowing motion like fluid dynamics",
+    description: "Smooth fluid dynamics with density fields",
     config: {
-      colorMappingMode: "pitch",
-      colorMode: "hsla",
       particleShape: "circle",
       trailMode: "fade",
-      trailIntensity: 0.4, // Much higher for fluid trails
-      particleDrift: 0.9, // High smooth organic movement
+      trailIntensity: 0.4, // Higher for fluid trails
+      particleDrift: 0.05, // Minimal - fluid grid handles movement
       particleRotation: false,
       intensity: 0.8,
-      complexity: 1.0, // Maximum complexity for fluid-like behavior
+      complexity: 1.0, // Maximum complexity for fluid behavior
       motionSpeed: 0.3, // Slower for fluid feel
-      hueVariation: 0.4,
       showTrails: true,
-      particleSize: 2, // Much smaller particles for fluid feel
-      blurAmount: 0.6, // More blur for fluid effect
+      particleSize: 3, // Smaller particles for fluid feel
       showVelocity: false,
     },
   },
@@ -137,10 +87,18 @@ export function applyPreset(
     return currentConfig;
   }
 
+  // Preserve color settings (they are global, not preset-specific)
+  const { colorMappingMode, colorMode, hueVariation, colorPalette } = currentConfig;
+
   return {
     ...currentConfig,
     ...preset.config,
     preset: presetName,
+    // Explicitly preserve color settings
+    colorMappingMode,
+    colorMode,
+    hueVariation,
+    colorPalette,
   };
 }
 
